@@ -33,3 +33,8 @@ Then jordan wrote a python script to convert MBTILES or folder of tiles to GPKG 
 
 There is a NEXTJS PWA Web App for internal Developer/Data Engineer use to manage this import process and preview data and metadata
 before executing a workflow
+
+Other Capabilities:
+Support for any OGR or DUCKDB format
+Support for converting ESRI Mobile Geodatabase SQLite to GPKG or other GIS Format
+Ability to import 3D Geometry into postgis
