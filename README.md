@@ -45,3 +45,11 @@ It also can create GeoJSON Simple Style Spec
 
 It uses pocketbase server and it's real-time API and hooks to allow the front-end to subscribe and see events
 it also has pyDANTIC and Google Cloud python https://github.com/GoogleCloudPlatform/cloud-sql-python-connector
+Pocketbase is using GOOGLE SSO signin
+
+with some roles:
+Viewer - Can only view data, no modifications
+Analyst - Can run select queries but not modify data
+Project Manager - Can make assignments and manage workflows but not modify data
+Data Engineer - Can upload and modify data
+Admin - Full access to all features
