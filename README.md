@@ -39,4 +39,5 @@ Support for any OGR or DUCKDB format
 Support for converting ESRI Mobile Geodatabase SQLite to GPKG or other GIS Format
 Ability to import 3D Geometry into postgis
 
-NextJS PWA web app can create basic styling symbology and labeling for GL JSON Vector Tiles and SLD for geoserver/geonode
+NextJS PWA web app can create basic styling symbology and labeling for GL JSON Vector Tiles and 
+create SLD symbology encoding and as needed introduce geostyler https://geostyler.org/ for import into geoserver/geonode
