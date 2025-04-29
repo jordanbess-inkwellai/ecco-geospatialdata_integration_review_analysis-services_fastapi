@@ -53,3 +53,28 @@ Analyst - Can run select queries but not modify data
 Project Manager - Can make assignments and manage workflows but not modify data
 Data Engineer - Can upload and modify data
 Admin - Full access to all features
+
+HERE IS a high level architecture:
+Frontend Layer
+NextJS PWA Application
+QGIS Plugin
+
+API Layer
+FastAPI Microservices
+API Endpoints
+
+Processing Layer
+DuckDB
+Tippecanoe
+Kestra Workflows
+DLT Pipelines
+
+Data Layer
+PostgreSQL/PostGIS
+Vector Tiles (PMTiles/MBTiles)
+File Storage
+
+Integration Layer
+PocketBase
+Martin MapLibre
+Box.com Integration
