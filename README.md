@@ -41,3 +41,6 @@ Ability to import 3D Geometry into postgis
 
 NextJS PWA web app can create basic styling symbology and labeling for GL JSON Vector Tiles and 
 create SLD symbology encoding and as needed introduce geostyler https://geostyler.org/ for import into geoserver/geonode
+
+It uses pocketbase server and it's real-time API and hooks to allow the front-end to subscribe and see events
+it also has pyDANTIC and Google Cloud python https://github.com/GoogleCloudPlatform/cloud-sql-python-connector
