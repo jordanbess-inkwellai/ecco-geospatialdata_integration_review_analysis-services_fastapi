@@ -2,12 +2,12 @@
 python fast API microservices and kestra orchestration for reviewing geospatial data sources and importing into POSTGIS, GeoServer and executing spatial functions and queries
 
 as a starting point this project leverages the existing great https://github.com/mkeller3
-FastImporter  - Import GIS Data to PostGIS
-FastGeospatial
-FastGeofeature
-FastGeostats
-FastGeoTable
-FastGeosuitability
+-FastImporter  - Import GIS Data to PostGIS
+-FastGeospatial
+-FastGeofeature
+-FastGeostats
+-FastGeoTable
+-FastGeosuitability
 
 Extends this to support the additional spatial analysis queries for the spatial intelligence team
 It uses DUCKDB and OGR FDW + PG_Analytics FDW for Postgres 
