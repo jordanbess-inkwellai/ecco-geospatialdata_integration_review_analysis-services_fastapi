@@ -78,3 +78,18 @@ Integration Layer
 PocketBase
 Martin MapLibre
 Box.com Integration
+
+he project includes integration with GeoDiff and DBFriend for data conflation and change detection:
+
+- **GeoDiff**: Detect and apply changes between geospatial datasets
+  - Create changesets between GeoPackage files
+  - Apply changesets to update files
+  - List changes in a changeset
+  - Rebase changes to resolve conflicts
+
+- **DBFriend**: Compare and synchronize databases
+  - Compare database schemas and data
+  - Generate SQL scripts for synchronization
+  - Apply changes between databases
+ 
+  There are optional build Flags to introduce AI Models specifically trained for working on Data Schema Review and Data QA/QC and Other Data Engineering Tasks
