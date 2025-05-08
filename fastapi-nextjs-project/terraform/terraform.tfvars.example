@@ -1,0 +1,21 @@
+project_id        = "your-gcp-project-id"
+project_prefix    = "mcp-server"
+region            = "us-central1"
+zone              = "us-central1-a"
+environment       = "development"
+
+# Database settings
+db_tier           = "db-custom-2-4096"  # 2 vCPUs, 4GB RAM
+db_name           = "postgres"
+db_user           = "postgres"
+db_password       = "change-me-to-a-secure-password"
+
+# GKE settings
+gke_num_nodes     = 2
+gke_machine_type  = "e2-standard-2"  # 2 vCPUs, 8GB RAM
+
+# AI features (optional)
+enable_ai_features = false
+gke_gpu_nodes      = 1
+gke_gpu_machine_type = "n1-standard-4"  # 4 vCPUs, 15GB RAM
+gpu_type           = "nvidia-tesla-t4"

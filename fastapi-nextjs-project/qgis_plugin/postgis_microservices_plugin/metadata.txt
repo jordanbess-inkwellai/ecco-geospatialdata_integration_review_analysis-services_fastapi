@@ -1,0 +1,16 @@
+[general]
+name=PostGIS Microservices
+qgisMinimumVersion=3.0
+description=Integration with PostGIS Microservices and NextJS application
+version=1.0.0
+author=Your Organization
+email=your.email@example.com
+about=This plugin integrates with the PostGIS Microservices API and NextJS application, providing access to geospatial data management, DuckDB operations, Tippecanoe vector tile generation, workflow management with Kestra, and database monitoring.
+tracker=https://github.com/yourusername/postgis-microservices/issues
+repository=https://github.com/yourusername/postgis-microservices
+tags=postgis,microservices,duckdb,tippecanoe,kestra,workflow,monitoring,database,vector tiles
+homepage=https://github.com/yourusername/postgis-microservices
+category=Database
+icon=icons/icon.png
+experimental=False
+deprecated=False

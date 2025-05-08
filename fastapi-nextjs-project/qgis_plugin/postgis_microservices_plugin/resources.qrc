@@ -1,0 +1,11 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource>
+    <file>icons/icon.svg</file>
+    <file>icons/database.svg</file>
+    <file>icons/workflow.svg</file>
+    <file>icons/duckdb.svg</file>
+    <file>icons/tippecanoe.svg</file>
+    <file>icons/monitoring.svg</file>
+  </qresource>
+</RCC>

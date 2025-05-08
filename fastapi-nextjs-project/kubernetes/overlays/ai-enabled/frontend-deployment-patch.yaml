@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: mcp-server
+spec:
+  template:
+    spec:
+      containers:
+      - name: frontend
+        env:
+        - name: NEXT_PUBLIC_AI_ENABLED
+          value: "true"
+        - name: NEXT_PUBLIC_AI_MODEL
+          value: "jellyfish"

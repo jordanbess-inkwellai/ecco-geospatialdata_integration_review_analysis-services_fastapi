@@ -1,0 +1,185 @@
+id: postgres-to-duckdb-flow
+namespace: default
+description: Extract data from PostgreSQL and load into DuckDB for analysis
+
+inputs:
+  - name: postgres_connection
+    type: STRING
+    description: PostgreSQL connection string
+    required: true
+  
+  - name: query
+    type: STRING
+    description: SQL query to extract data
+    required: true
+  
+  - name: duckdb_path
+    type: STRING
+    description: Path to DuckDB database file
+    required: false
+    defaults: "data/analytics.duckdb"
+  
+  - name: output_table
+    type: STRING
+    description: Name of the output table in DuckDB
+    required: true
+  
+  - name: primary_key
+    type: STRING
+    description: Primary key column(s), comma-separated
+    required: false
+  
+  - name: write_disposition
+    type: STRING
+    description: How to write data (append, replace, merge)
+    required: false
+    defaults: "merge"
+  
+  - name: slack_webhook
+    type: STRING
+    description: Slack webhook URL for notifications
+    required: false
+
+tasks:
+  - id: run_dlt_pipeline
+    type: io.kestra.plugin.scripts.python.Python
+    pythonVersion: "3.10"
+    inputFiles:
+      input.json: |
+        {
+          "postgres_connection": "{{ inputs.postgres_connection }}",
+          "query": "{{ inputs.query }}",
+          "duckdb_path": "{{ inputs.duckdb_path }}",
+          "output_table": "{{ inputs.output_table }}",
+          "primary_key": "{{ inputs.primary_key }}",
+          "write_disposition": "{{ inputs.write_disposition }}"
+        }
+    script: |
+      import sys
+      import os
+      import subprocess
+      import json
+      
+      # Path to the DLT pipeline script
+      pipeline_script = "scripts/dlt/pipelines/postgres_to_duckdb.py"
+      
+      # Check if the script exists
+      if not os.path.exists(pipeline_script):
+          raise FileNotFoundError(f"Pipeline script not found: {pipeline_script}")
+      
+      # Run the pipeline script
+      result = subprocess.run(
+          [sys.executable, pipeline_script],
+          capture_output=True,
+          text=True
+      )
+      
+      # Check if the script ran successfully
+      if result.returncode != 0:
+          print(f"Error running pipeline: {result.stderr}")
+          sys.exit(result.returncode)
+      
+      # Check if output.json exists
+      if os.path.exists('output.json'):
+          with open('output.json', 'r') as f:
+              output = json.load(f)
+              print(f"Pipeline output: {json.dumps(output, indent=2)}")
+              
+              # Save outputs as variables
+              outputs = {}
+              outputs["row_count"] = output.get("row_count", 0)
+              outputs["output_path"] = output.get("output_path", "")
+              
+              # Write outputs to file for Kestra
+              with open('outputs.json', 'w') as out_file:
+                  json.dump(outputs, out_file)
+      else:
+          print("No output.json file found")
+      
+      print("Pipeline completed successfully")
+    outputFiles:
+      - outputs.json
+
+  - id: analyze_data
+    type: io.kestra.plugin.scripts.python.Python
+    pythonVersion: "3.10"
+    inputs:
+      row_count: "{{ outputs.run_dlt_pipeline.row_count }}"
+      output_path: "{{ outputs.run_dlt_pipeline.output_path }}"
+    dependsOn:
+      - run_dlt_pipeline
+    script: |
+      import duckdb
+      import os
+      import json
+      
+      # Get inputs
+      row_count = int("{{ inputs.row_count }}")
+      output_path = "{{ inputs.output_path }}"
+      
+      print(f"Analyzing data in {output_path}")
+      print(f"Processed {row_count} rows")
+      
+      # Connect to DuckDB
+      if os.path.exists(output_path):
+          conn = duckdb.connect(output_path)
+          
+          # Get table list
+          tables = conn.execute("SHOW TABLES").fetchall()
+          print(f"Tables in database: {[t[0] for t in tables]}")
+          
+          # Get table schema
+          table_name = "{{ inputs.output_table }}"
+          schema = conn.execute(f"DESCRIBE {table_name}").fetchall()
+          print(f"Schema for {table_name}:")
+          for col in schema:
+              print(f"  {col[0]}: {col[1]}")
+          
+          # Get row count
+          actual_count = conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]
+          print(f"Actual row count: {actual_count}")
+          
+          # Close connection
+          conn.close()
+      else:
+          print(f"Database file not found: {output_path}")
+
+  - id: notify_success
+    type: io.kestra.plugin.notifications.slack.SlackMessage
+    url: "{{ inputs.slack_webhook }}"
+    message: |
+      :white_check_mark: PostgreSQL to DuckDB pipeline completed successfully
+      
+      *Query*: {{ inputs.query }}
+      *Output Table*: {{ inputs.output_table }}
+      *Rows Processed*: {{ outputs.run_dlt_pipeline.row_count }}
+      *Output Path*: {{ outputs.run_dlt_pipeline.output_path }}
+      *Execution ID*: {{ execution.id }}
+      
+      [View in Kestra]({{ kestra.url }}/executions/{{ execution.id }})
+    dependsOn:
+      - analyze_data
+    when:
+      condition: "{{ inputs.slack_webhook != null }}"
+
+triggers:
+  - id: schedule
+    type: schedule
+    cron: "0 0 * * *"  # Run daily at midnight
+    disabled: true
+
+errors:
+  - id: notify_failure
+    type: io.kestra.plugin.notifications.slack.SlackMessage
+    url: "{{ inputs.slack_webhook }}"
+    message: |
+      :x: PostgreSQL to DuckDB pipeline failed
+      
+      *Query*: {{ inputs.query }}
+      *Output Table*: {{ inputs.output_table }}
+      *Execution ID*: {{ execution.id }}
+      *Error*: {{ execution.state.exception.message }}
+      
+      [View in Kestra]({{ kestra.url }}/executions/{{ execution.id }})
+    when:
+      condition: "{{ inputs.slack_webhook != null }}"

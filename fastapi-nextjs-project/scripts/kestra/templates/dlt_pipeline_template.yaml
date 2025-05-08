@@ -1,0 +1,114 @@
+# Template for running DLT pipelines in Kestra
+# This template can be used to create workflows that run DLT pipelines
+
+id: dlt-pipeline-template
+namespace: templates
+description: Template for running DLT pipelines
+
+inputs:
+  - name: pipeline_script
+    type: STRING
+    description: Path to the DLT pipeline script
+    required: true
+  
+  - name: pipeline_inputs
+    type: JSON
+    description: Inputs for the DLT pipeline
+    required: true
+  
+  - name: python_version
+    type: STRING
+    description: Python version to use
+    required: false
+    defaults: "3.10"
+  
+  - name: notify_on_success
+    type: BOOLEAN
+    description: Whether to send a notification on success
+    required: false
+    defaults: true
+  
+  - name: notify_on_failure
+    type: BOOLEAN
+    description: Whether to send a notification on failure
+    required: false
+    defaults: true
+  
+  - name: slack_webhook
+    type: STRING
+    description: Slack webhook URL for notifications
+    required: false
+
+tasks:
+  - id: run_dlt_pipeline
+    type: io.kestra.plugin.scripts.python.Python
+    pythonVersion: "{{ inputs.python_version }}"
+    inputFiles:
+      input.json: "{{ inputs.pipeline_inputs }}"
+    script: |
+      import sys
+      import os
+      import subprocess
+      import json
+      
+      # Get the pipeline script path
+      pipeline_script = "{{ inputs.pipeline_script }}"
+      
+      # Check if the script exists
+      if not os.path.exists(pipeline_script):
+          raise FileNotFoundError(f"Pipeline script not found: {pipeline_script}")
+      
+      # Run the pipeline script
+      result = subprocess.run(
+          [sys.executable, pipeline_script],
+          capture_output=True,
+          text=True
+      )
+      
+      # Check if the script ran successfully
+      if result.returncode != 0:
+          print(f"Error running pipeline: {result.stderr}")
+          sys.exit(result.returncode)
+      
+      # Check if output.json exists
+      if os.path.exists('output.json'):
+          with open('output.json', 'r') as f:
+              output = json.load(f)
+              print(f"Pipeline output: {json.dumps(output, indent=2)}")
+      else:
+          print("No output.json file found")
+      
+      print("Pipeline completed successfully")
+
+  - id: notify_success
+    type: io.kestra.plugin.notifications.slack.SlackMessage
+    url: "{{ inputs.slack_webhook }}"
+    message: |
+      :white_check_mark: DLT Pipeline completed successfully
+      
+      *Pipeline*: {{ inputs.pipeline_script }}
+      *Execution ID*: {{ execution.id }}
+      *Started*: {{ execution.startDate }}
+      *Duration*: {{ duration(execution.startDate, execution.endDate) }}
+      
+      [View in Kestra]({{ kestra.url }}/executions/{{ execution.id }})
+    dependsOn:
+      - run_dlt_pipeline
+    when:
+      condition: "{{ inputs.notify_on_success == true && inputs.slack_webhook != null }}"
+
+errors:
+  - id: notify_failure
+    type: io.kestra.plugin.notifications.slack.SlackMessage
+    url: "{{ inputs.slack_webhook }}"
+    message: |
+      :x: DLT Pipeline failed
+      
+      *Pipeline*: {{ inputs.pipeline_script }}
+      *Execution ID*: {{ execution.id }}
+      *Started*: {{ execution.startDate }}
+      *Duration*: {{ duration(execution.startDate, execution.endDate) }}
+      
+      [View in Kestra]({{ kestra.url }}/executions/{{ execution.id }})
+    when:
+      condition: "{{ inputs.notify_on_failure == true && inputs.slack_webhook != null }}"

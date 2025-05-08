@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../base
+- huggingface-pvc.yaml
+
+patchesStrategicMerge:
+- api-deployment-patch.yaml
+- frontend-deployment-patch.yaml
+
+namePrefix: ai-

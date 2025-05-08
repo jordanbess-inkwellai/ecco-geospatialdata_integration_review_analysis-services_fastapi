@@ -1,0 +1,182 @@
+version: '3.8'
+
+services:
+  # Base API service without AI features
+  api:
+    build:
+      context: .
+      args:
+        ENABLE_AI_FEATURES: "false"
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
+      - ENABLE_AI_FEATURES=false
+    volumes:
+      - ./app:/app/app
+      - ./uploads:/app/uploads
+    depends_on:
+      - db
+
+  # API service with Jellyfish-13B model
+  api-jellyfish:
+    build:
+      context: .
+      args:
+        ENABLE_AI_FEATURES: "true"
+        AI_MODEL_TYPE: "jellyfish"
+    ports:
+      - "8001:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
+      - ENABLE_AI_FEATURES=true
+      - AI_MODEL_TYPE=jellyfish
+      - AI_MODEL_DEVICE=cuda
+      - AI_MODEL_QUANTIZATION=4bit
+    volumes:
+      - ./app:/app/app
+      - ./uploads:/app/uploads
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    depends_on:
+      - db
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # API service with XLNet model
+  api-xlnet:
+    build:
+      context: .
+      args:
+        ENABLE_AI_FEATURES: "true"
+        AI_MODEL_TYPE: "xlnet"
+    ports:
+      - "8002:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
+      - ENABLE_AI_FEATURES=true
+      - AI_MODEL_TYPE=xlnet
+      - AI_MODEL_DEVICE=cuda
+    volumes:
+      - ./app:/app/app
+      - ./uploads:/app/uploads
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    depends_on:
+      - db
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # API service with T5 model
+  api-t5:
+    build:
+      context: .
+      args:
+        ENABLE_AI_FEATURES: "true"
+        AI_MODEL_TYPE: "t5"
+    ports:
+      - "8003:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
+      - ENABLE_AI_FEATURES=true
+      - AI_MODEL_TYPE=t5
+      - AI_MODEL_DEVICE=cuda
+    volumes:
+      - ./app:/app/app
+      - ./uploads:/app/uploads
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    depends_on:
+      - db
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # API service with BERT model
+  api-bert:
+    build:
+      context: .
+      args:
+        ENABLE_AI_FEATURES: "true"
+        AI_MODEL_TYPE: "bert"
+    ports:
+      - "8004:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/postgres
+      - ENABLE_AI_FEATURES=true
+      - AI_MODEL_TYPE=bert
+      - AI_MODEL_DEVICE=cuda
+    volumes:
+      - ./app:/app/app
+      - ./uploads:/app/uploads
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    depends_on:
+      - db
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # Frontend service for base API (no AI)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+      - NEXT_PUBLIC_AI_ENABLED=false
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - api
+
+  # Frontend service for Jellyfish-13B API
+  frontend-jellyfish:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8001/api/v1
+      - NEXT_PUBLIC_AI_ENABLED=true
+      - NEXT_PUBLIC_AI_MODEL=jellyfish
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - api-jellyfish
+
+  # Database service
+  db:
+    image: postgis/postgis:15-3.3
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

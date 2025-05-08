@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: mcp-server
+spec:
+  template:
+    spec:
+      nodeSelector:
+        ai: "true"
+      containers:
+      - name: api
+        env:
+        - name: ENABLE_AI_FEATURES
+          value: "true"
+        - name: AI_MODEL_TYPE
+          value: "jellyfish"
+        - name: AI_MODEL_DEVICE
+          value: "cuda"
+        - name: AI_MODEL_QUANTIZATION
+          value: "4bit"
+        resources:
+          requests:
+            cpu: "2"
+            memory: "8Gi"
+            nvidia.com/gpu: 1
+          limits:
+            cpu: "4"
+            memory: "16Gi"
+            nvidia.com/gpu: 1
+        volumeMounts:
+        - name: huggingface-cache
+          mountPath: /root/.cache/huggingface
+      volumes:
+      - name: huggingface-cache
+        persistentVolumeClaim:
+          claimName: huggingface-cache-pvc

@@ -1,0 +1,65 @@
+{
+  "name": "integrated-geospatial-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "axios": "^1.4.0",
+    "maplibre-gl": "^3.3.1",
+    "deck.gl": "^8.9.27",
+    "@deck.gl/core": "^8.9.27",
+    "@deck.gl/layers": "^8.9.27",
+    "@deck.gl/geo-layers": "^8.9.27",
+    "@deck.gl/react": "^8.9.27",
+    "@deck.gl/mapbox": "^8.9.27",
+    "@turf/turf": "^6.5.0",
+    "react-map-gl": "^7.1.6",
+    "next-pwa": "^5.6.0",
+    "geojson-validation": "^1.0.2",
+    "react-dropzone": "^14.2.3",
+    "react-hook-form": "^7.45.1",
+    "swr": "^2.2.0",
+
+    "@mui/material": "^5.14.5",
+    "@mui/icons-material": "^5.14.5",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+
+    "reactflow": "^11.8.3",
+    "mermaid": "^10.3.1",
+    "dagre": "^0.8.5",
+    "elkjs": "^0.8.2",
+
+    "react-jupyter": "^0.1.0",
+    "react-syntax-highlighter": "^15.5.0",
+    "react-markdown": "^8.0.7",
+    "react-iframe": "^1.8.5",
+    "socket.io-client": "^4.7.2",
+    "zustand": "^4.4.1",
+    "react-query": "^3.39.3",
+    "monaco-editor": "^0.41.0",
+    "@monaco-editor/react": "^4.5.1",
+    "react-resizable-panels": "^0.0.55",
+    "date-fns": "^2.30.0",
+    "react-virtualized": "^9.22.5",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@types/geojson": "^7946.0.10",
+    "eslint": "^8.42.0",
+    "eslint-config-next": "^13.4.5"
+  }
+}

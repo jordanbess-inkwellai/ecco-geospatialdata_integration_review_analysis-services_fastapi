@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="900" viewBox="0 0 1200 900">
+  <style>
+    .title {
+      font-family: Arial, sans-serif;
+      font-size: 24px;
+      font-weight: bold;
+      text-anchor: middle;
+    }
+    .subtitle {
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+      text-anchor: middle;
+    }
+    .label {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      text-anchor: middle;
+    }
+    .small-label {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      text-anchor: middle;
+    }
+    .layer-title {
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      font-weight: bold;
+      text-anchor: middle;
+      fill: white;
+    }
+    .arrow {
+      stroke: #666;
+      stroke-width: 2;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+    .dashed-arrow {
+      stroke: #666;
+      stroke-width: 2;
+      stroke-dasharray: 5,5;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+    .component {
+      stroke: #333;
+      stroke-width: 2;
+      fill: white;
+    }
+    .frontend {
+      fill: #61DAFB;
+    }
+    .api {
+      fill: #38B2AC;
+    }
+    .processing {
+      fill: #9F7AEA;
+    }
+    .data {
+      fill: #F6AD55;
+    }
+    .integration {
+      fill: #FC8181;
+    }
+    .layer-box {
+      stroke: #333;
+      stroke-width: 2;
+      fill-opacity: 0.1;
+    }
+  </style>
+
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="600" y="40" class="title">Integrated Geospatial Application Architecture</text>
+
+  <!-- Layer Backgrounds -->
+  <!-- Frontend Layer -->
+  <rect x="50" y="80" width="1100" height="120" rx="10" ry="10" class="layer-box frontend" />
+  <rect x="50" y="80" width="150" height="30" rx="5" ry="5" class="frontend" />
+  <text x="125" y="100" class="layer-title">Frontend Layer</text>
+
+  <!-- API Layer -->
+  <rect x="50" y="220" width="1100" height="120" rx="10" ry="10" class="layer-box api" />
+  <rect x="50" y="220" width="150" height="30" rx="5" ry="5" class="api" />
+  <text x="125" y="240" class="layer-title">API Layer</text>
+
+  <!-- Processing Layer -->
+  <rect x="50" y="360" width="1100" height="180" rx="10" ry="10" class="layer-box processing" />
+  <rect x="50" y="360" width="150" height="30" rx="5" ry="5" class="processing" />
+  <text x="125" y="380" class="layer-title">Processing Layer</text>
+
+  <!-- Integration Layer -->
+  <rect x="50" y="560" width="1100" height="120" rx="10" ry="10" class="layer-box integration" />
+  <rect x="50" y="560" width="150" height="30" rx="5" ry="5" class="integration" />
+  <text x="125" y="580" class="layer-title">Integration Layer</text>
+
+  <!-- Data Layer -->
+  <rect x="50" y="700" width="1100" height="120" rx="10" ry="10" class="layer-box data" />
+  <rect x="50" y="700" width="150" height="30" rx="5" ry="5" class="data" />
+  <text x="125" y="720" class="layer-title">Data Layer</text>
+
+  <!-- Frontend Layer Components -->
+  <!-- NextJS PWA -->
+  <rect x="100" y="120" width="200" height="60" rx="5" ry="5" class="component frontend" />
+  <text x="200" y="155" class="label">NextJS PWA</text>
+
+  <!-- QGIS Plugin -->
+  <rect x="350" y="120" width="200" height="60" rx="5" ry="5" class="component frontend" />
+  <text x="450" y="155" class="label">QGIS Plugin</text>
+
+  <!-- Marimo -->
+  <rect x="600" y="120" width="200" height="60" rx="5" ry="5" class="component frontend" />
+  <text x="700" y="155" class="label">Marimo Notebooks</text>
+
+  <!-- Script Repository -->
+  <rect x="850" y="120" width="200" height="60" rx="5" ry="5" class="component frontend" />
+  <text x="950" y="155" class="label">Script Repository</text>
+
+  <!-- API Layer Components -->
+  <!-- FastAPI -->
+  <rect x="100" y="260" width="200" height="60" rx="5" ry="5" class="component api" />
+  <text x="200" y="280" class="label">FastAPI</text>
+  <text x="200" y="300" class="small-label">Core Microservices</text>
+
+  <!-- FastGeospatial -->
+  <rect x="350" y="260" width="120" height="60" rx="5" ry="5" class="component api" />
+  <text x="410" y="295" class="small-label">FastGeospatial</text>
+
+  <!-- FastImporter -->
+  <rect x="480" y="260" width="120" height="60" rx="5" ry="5" class="component api" />
+  <text x="540" y="295" class="small-label">FastImporter</text>
+
+  <!-- FateGeoFeature -->
+  <rect x="610" y="260" width="120" height="60" rx="5" ry="5" class="component api" />
+  <text x="670" y="295" class="small-label">FateGeoFeature</text>
+
+  <!-- FastGeoTable -->
+  <rect x="740" y="260" width="120" height="60" rx="5" ry="5" class="component api" />
+  <text x="800" y="295" class="small-label">FastGeoTable</text>
+
+  <!-- FastGeoSuitability -->
+  <rect x="870" y="260" width="120" height="60" rx="5" ry="5" class="component api" />
+  <text x="930" y="295" class="small-label">FastGeoSuitability</text>
+
+  <!-- Processing Layer Components -->
+  <!-- DuckDB -->
+  <rect x="100" y="400" width="200" height="60" rx="5" ry="5" class="component processing" />
+  <text x="200" y="435" class="label">DuckDB</text>
+
+  <!-- Tippecanoe -->
+  <rect x="350" y="400" width="200" height="60" rx="5" ry="5" class="component processing" />
+  <text x="450" y="435" class="label">Tippecanoe</text>
+
+  <!-- Kestra -->
+  <rect x="600" y="400" width="200" height="60" rx="5" ry="5" class="component processing" />
+  <text x="700" y="435" class="label">Kestra Workflows</text>
+
+  <!-- DLT -->
+  <rect x="850" y="400" width="200" height="60" rx="5" ry="5" class="component processing" />
+  <text x="950" y="435" class="label">DLT Pipelines</text>
+
+  <!-- Workflow Templates -->
+  <rect x="600" y="480" width="200" height="40" rx="5" ry="5" class="component processing" />
+  <text x="700" y="505" class="small-label">Workflow Templates</text>
+
+  <!-- DLT Templates -->
+  <rect x="850" y="480" width="200" height="40" rx="5" ry="5" class="component processing" />
+  <text x="950" y="505" class="small-label">DLT Templates</text>
+
+  <!-- Integration Layer Components -->
+  <!-- PocketBase -->
+  <rect x="100" y="600" width="200" height="60" rx="5" ry="5" class="component integration" />
+  <text x="200" y="635" class="label">PocketBase</text>
+
+  <!-- Martin MapLibre -->
+  <rect x="350" y="600" width="200" height="60" rx="5" ry="5" class="component integration" />
+  <text x="450" y="635" class="label">Martin MapLibre</text>
+
+  <!-- Box.com Integration -->
+  <rect x="600" y="600" width="200" height="60" rx="5" ry="5" class="component integration" />
+  <text x="700" y="635" class="label">Box.com Integration</text>
+
+  <!-- OGR_FDW -->
+  <rect x="850" y="600" width="200" height="60" rx="5" ry="5" class="component integration" />
+  <text x="950" y="635" class="label">OGR_FDW</text>
+
+  <!-- Data Layer Components -->
+  <!-- PostgreSQL/PostGIS -->
+  <rect x="100" y="740" width="200" height="60" rx="5" ry="5" class="component data" />
+  <text x="200" y="765" class="label">PostgreSQL/PostGIS</text>
+  <text x="200" y="785" class="small-label">Spatial Database</text>
+
+  <!-- Vector Tiles -->
+  <rect x="350" y="740" width="200" height="60" rx="5" ry="5" class="component data" />
+  <text x="450" y="765" class="label">Vector Tiles</text>
+  <text x="450" y="785" class="small-label">PMTiles/MBTiles</text>
+
+  <!-- File Storage -->
+  <rect x="600" y="740" width="200" height="60" rx="5" ry="5" class="component data" />
+  <text x="700" y="765" class="label">File Storage</text>
+  <text x="700" y="785" class="small-label">GeoJSON, Shapefile, etc.</text>
+
+  <!-- Cloud Storage -->
+  <rect x="850" y="740" width="200" height="60" rx="5" ry="5" class="component data" />
+  <text x="950" y="765" class="label">Cloud Storage</text>
+  <text x="950" y="785" class="small-label">Box.com, S3, etc.</text>
+
+  <!-- Connections -->
+  <!-- Frontend to API -->
+  <path d="M200 180 L200 260" class="arrow" />
+  <path d="M450 180 L450 260" class="arrow" />
+  <path d="M700 180 L700 260" class="arrow" />
+  <path d="M950 180 L950 260" class="arrow" />
+
+  <!-- API to Processing -->
+  <path d="M200 320 L200 400" class="arrow" />
+  <path d="M450 320 L450 400" class="arrow" />
+  <path d="M700 320 L700 400" class="arrow" />
+  <path d="M950 320 L950 400" class="arrow" />
+
+  <!-- Processing to Integration -->
+  <path d="M200 460 L200 600" class="arrow" />
+  <path d="M450 460 L450 600" class="arrow" />
+  <path d="M700 460 L700 600" class="arrow" />
+  <path d="M950 460 L950 600" class="arrow" />
+
+  <!-- Integration to Data -->
+  <path d="M200 660 L200 740" class="arrow" />
+  <path d="M450 660 L450 740" class="arrow" />
+  <path d="M700 660 L700 740" class="arrow" />
+  <path d="M950 660 L950 740" class="arrow" />
+
+  <!-- Cross-layer connections -->
+  <!-- DuckDB to PostgreSQL -->
+  <path d="M150 460 C150 500, 100 700, 150 740" class="dashed-arrow" />
+
+  <!-- Kestra to DLT -->
+  <path d="M800 430 L850 430" class="dashed-arrow" />
+
+  <!-- PocketBase to NextJS -->
+  <path d="M150 600 C150 500, 100 200, 150 180" class="dashed-arrow" />
+
+  <!-- Martin to Vector Tiles -->
+  <path d="M450 660 L450 740" class="arrow" />
+
+  <!-- Box.com to Cloud Storage -->
+  <path d="M700 660 L850 740" class="dashed-arrow" />
+
+  <!-- OGR_FDW to PostgreSQL -->
+  <path d="M850 630 C800 650, 300 650, 250 740" class="dashed-arrow" />
+
+  <!-- Tippecanoe to Vector Tiles -->
+  <path d="M450 460 L450 740" class="dashed-arrow" />
+
+  <!-- API Microservices Connections -->
+  <path d="M300 280 L350 280" class="arrow" />
+  <path d="M470 280 L480 280" class="arrow" />
+  <path d="M600 280 L610 280" class="arrow" />
+  <path d="M730 280 L740 280" class="arrow" />
+  <path d="M860 280 L870 280" class="arrow" />
+
+  <!-- Workflow Templates to Kestra -->
+  <path d="M700 480 L700 460" class="arrow" />
+
+  <!-- DLT Templates to DLT -->
+  <path d="M950 480 L950 460" class="arrow" />
+</svg>

@@ -1,0 +1,87 @@
+steps:
+# Build the API image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/mcp-server-api:$COMMIT_SHA', '-t', 'gcr.io/$PROJECT_ID/mcp-server-api:latest', '.']
+
+# Build the Frontend image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/mcp-server-frontend:$COMMIT_SHA', '-t', 'gcr.io/$PROJECT_ID/mcp-server-frontend:latest', './frontend']
+
+# Push the API image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/mcp-server-api:$COMMIT_SHA']
+
+# Push the Frontend image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/mcp-server-frontend:$COMMIT_SHA']
+
+# Deploy to GKE
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - 'set'
+  - 'image'
+  - 'deployment/api'
+  - 'api=gcr.io/$PROJECT_ID/mcp-server-api:$COMMIT_SHA'
+  - '--namespace=mcp-server'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - 'set'
+  - 'image'
+  - 'deployment/frontend'
+  - 'frontend=gcr.io/$PROJECT_ID/mcp-server-frontend:$COMMIT_SHA'
+  - '--namespace=mcp-server'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'
+
+# Build AI-enabled API image (if enabled)
+- name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '-t', 'gcr.io/$PROJECT_ID/mcp-server-api-ai:$COMMIT_SHA',
+    '-t', 'gcr.io/$PROJECT_ID/mcp-server-api-ai:latest',
+    '--build-arg', 'ENABLE_AI_FEATURES=true',
+    '--build-arg', 'AI_MODEL_TYPE=jellyfish',
+    '.'
+  ]
+  id: 'build-ai-api'
+  waitFor: ['-']
+  
+# Push AI-enabled API image (if enabled)
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/mcp-server-api-ai:$COMMIT_SHA']
+  waitFor: ['build-ai-api']
+
+# Deploy AI-enabled API to GKE (if enabled)
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - 'set'
+  - 'image'
+  - 'deployment/ai-api'
+  - 'api=gcr.io/$PROJECT_ID/mcp-server-api-ai:$COMMIT_SHA'
+  - '--namespace=mcp-server'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'
+  waitFor: ['build-ai-api']
+
+images:
+- 'gcr.io/$PROJECT_ID/mcp-server-api:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/mcp-server-api:latest'
+- 'gcr.io/$PROJECT_ID/mcp-server-frontend:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/mcp-server-frontend:latest'
+- 'gcr.io/$PROJECT_ID/mcp-server-api-ai:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/mcp-server-api-ai:latest'
+
+substitutions:
+  _CLOUDSDK_COMPUTE_ZONE: us-central1-a
+  _CLOUDSDK_CONTAINER_CLUSTER: mcp-server-gke
+
+options:
+  machineType: 'E2_HIGHCPU_8'
+  diskSizeGb: '100'
+  dynamic_substitutions: true
