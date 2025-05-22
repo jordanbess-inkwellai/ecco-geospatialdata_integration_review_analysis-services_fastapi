@@ -1,5 +1,7 @@
 # app/models/elec_models.py
 from sqlalchemy import Column, Integer, String, Numeric, Date, ForeignKey, Text, TIMESTAMP
+from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from geoalchemy2 import Geometry
 from app.database import Base
 
@@ -11,7 +13,8 @@ class Substation(Base):
     voltage_level_kv = Column(Numeric, nullable=False)
     status = Column(String(50), default='Active')
     geom = Column(Geometry('POINT', 4326), nullable=False)
-    created_at = Column(TIMESTAMP)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    feeders = relationship("Feeder", back_populates="substation")
 
 class Feeder(Base):
     __tablename__ = 'feeders'
@@ -21,7 +24,9 @@ class Feeder(Base):
     substation_id = Column(Integer, ForeignKey('network.substations.substation_id', ondelete='CASCADE'), nullable=False)
     voltage_level_kv = Column(Numeric)
     geom = Column(Geometry('LINESTRING', 4326), nullable=False)
-    created_at = Column(TIMESTAMP)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    substation = relationship("Substation", back_populates="feeders")
+    transformers = relationship("Transformer", back_populates="feeder")
 
 class Transformer(Base):
     __tablename__ = 'transformers'
@@ -32,7 +37,9 @@ class Transformer(Base):
     capacity_kva = Column(Numeric, nullable=False)
     status = Column(String(50), default='Active')
     geom = Column(Geometry('POINT', 4326), nullable=False)
-    created_at = Column(TIMESTAMP)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    feeder = relationship("Feeder", back_populates="transformers")
+    poles = relationship("Pole", back_populates="transformer")
 
 class Pole(Base):
     __tablename__ = 'poles'
@@ -43,7 +50,11 @@ class Pole(Base):
     height_meters = Column(Numeric)
     installation_year = Column(Integer)
     geom = Column(Geometry('POINT', 4326), nullable=False)
-    created_at = Column(TIMESTAMP)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    transformer = relationship("Transformer", back_populates="poles")
+    conductors_started = relationship("Conductor", foreign_keys="[Conductor.start_pole_id]", back_populates="start_pole")
+    conductors_ended = relationship("Conductor", foreign_keys="[Conductor.end_pole_id]", back_populates="end_pole")
+    meters = relationship("Meter", back_populates="pole")
 
 class Conductor(Base):
     __tablename__ = 'conductors'
@@ -54,7 +65,11 @@ class Conductor(Base):
     conductor_type = Column(String(100))
     voltage_rating_kv = Column(Numeric)
     geom = Column(Geometry('LINESTRING', 4326), nullable=False)
-    created_at = Column(TIMESTAMP)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    start_pole = relationship("Pole", foreign_keys=[start_pole_id], back_populates="conductors_started")
+    end_pole = relationship("Pole", foreign_keys=[end_pole_id], back_populates="conductors_ended")
+    switches = relationship("Switch", back_populates="conductor")
+    fuses = relationship("Fuse", back_populates="conductor")
 
 class Switch(Base):
     __tablename__ = 'switches'
@@ -64,7 +79,8 @@ class Switch(Base):
     switch_type = Column(String(100))
     operational_status = Column(String(50), default='Closed')
     geom = Column(Geometry('POINT', 4326), nullable=False)
-    created_at = Column(TIMESTAMP)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    conductor = relationship("Conductor", back_populates="switches")
 
 class Fuse(Base):
     __tablename__ = 'fuses'
@@ -74,7 +90,8 @@ class Fuse(Base):
     fuse_rating_amps = Column(Integer)
     operational_status = Column(String(50), default='Operational')
     geom = Column(Geometry('POINT', 4326), nullable=False)
-    created_at = Column(TIMESTAMP)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    conductor = relationship("Conductor", back_populates="fuses")
 
 class Meter(Base):
     __tablename__ = 'meters'
@@ -84,7 +101,10 @@ class Meter(Base):
     meter_number = Column(String(255), unique=True, nullable=False)
     installation_date = Column(Date)
     geom = Column(Geometry('POINT', 4326), nullable=False)
-    created_at = Column(TIMESTAMP)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    pole = relationship("Pole", back_populates="meters")
+    customers = relationship("Customer", back_populates="meter")
+    service_points = relationship("ServicePoint", back_populates="meter")
 
 class Customer(Base):
     __tablename__ = 'customers'
@@ -94,7 +114,8 @@ class Customer(Base):
     address = Column(Text)
     contact_number = Column(String(20))
     meter_id = Column(Integer, ForeignKey('network.meters.meter_id', ondelete='SET NULL'))
-    created_at = Column(TIMESTAMP)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    meter = relationship("Meter", back_populates="customers")
 
 class ServicePoint(Base):
     __tablename__ = 'service_points'
@@ -103,4 +124,5 @@ class ServicePoint(Base):
     meter_id = Column(Integer, ForeignKey('network.meters.meter_id', ondelete='CASCADE'))
     service_status = Column(String(50), default='Active')
     geom = Column(Geometry('POINT', 4326), nullable=False)
-    created_at = Column(TIMESTAMP)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    meter = relationship("Meter", back_populates="service_points")
